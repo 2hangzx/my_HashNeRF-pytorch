@@ -12,15 +12,18 @@ class HashEmbedder(nn.Module):
                 log2_hashmap_size=19, base_resolution=16, finest_resolution=512):
         super(HashEmbedder, self).__init__()
         self.bounding_box = bounding_box
-        self.n_levels = n_levels
-        self.n_features_per_level = n_features_per_level
-        self.log2_hashmap_size = log2_hashmap_size
-        self.base_resolution = torch.tensor(base_resolution)
+        self.n_levels = n_levels                                  # 多少个级别的hashmap，对应论文中的L
+        self.n_features_per_level = n_features_per_level          # hashmap中的每个特征的维度，对应论文中的F
+        self.log2_hashmap_size = log2_hashmap_size                # 每个hashmap中有多少个特征（2的指数次个），对应论文中的L
+        self.base_resolution = torch.tensor(base_r esolution)
         self.finest_resolution = torch.tensor(finest_resolution)
         self.out_dim = self.n_levels * self.n_features_per_level
 
         self.b = torch.exp((torch.log(self.finest_resolution)-torch.log(self.base_resolution))/(n_levels-1))
 
+        # nn.Embedding(num_embeddings, embedding_dim)创建了一个Lookup table, 用来实现hashmap
+        # args:
+        # num_beddings: 特征的数量 embedding_dim：每个特征的维度
         self.embeddings = nn.ModuleList([nn.Embedding(2**self.log2_hashmap_size, \
                                         self.n_features_per_level) for i in range(n_levels)])
         # custom uniform initialization
