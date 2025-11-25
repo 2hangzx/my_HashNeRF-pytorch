@@ -15,14 +15,14 @@ class HashEmbedder(nn.Module):
         self.n_levels = n_levels                                  # 多少个级别的hashmap，对应论文中的L
         self.n_features_per_level = n_features_per_level          # hashmap中的每个特征的维度，对应论文中的F
         self.log2_hashmap_size = log2_hashmap_size                # 每个hashmap中有多少个特征（2的指数次个），对应论文中的L
-        self.base_resolution = torch.tensor(base_r esolution)
+        self.base_resolution = torch.tensor(base_resolution)
         self.finest_resolution = torch.tensor(finest_resolution)
         self.out_dim = self.n_levels * self.n_features_per_level
 
         self.b = torch.exp((torch.log(self.finest_resolution)-torch.log(self.base_resolution))/(n_levels-1))
 
         # nn.Embedding(num_embeddings, embedding_dim)创建了一个Lookup table, 用来实现hashmap
-        # args:
+        # Parameters:
         # num_beddings: 特征的数量 embedding_dim：每个特征的维度
         self.embeddings = nn.ModuleList([nn.Embedding(2**self.log2_hashmap_size, \
                                         self.n_features_per_level) for i in range(n_levels)])
@@ -158,3 +158,7 @@ class SHEncoder(nn.Module):
                         result[..., 24] = self.C4[8] * (xx * (xx - 3 * yy) - yy * (3 * xx - yy))
 
         return result
+
+# test
+if __name__ == '_main_':
+    with
